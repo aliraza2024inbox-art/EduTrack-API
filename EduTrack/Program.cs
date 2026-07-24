@@ -72,6 +72,7 @@ builder.Services.AddScoped<IStudentTaskRepository, StudentTaskRepository>();
 // Services
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 var app = builder.Build();
 
 // ===========================================
