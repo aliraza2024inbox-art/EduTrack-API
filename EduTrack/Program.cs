@@ -2,6 +2,8 @@ using EduTrack.Api.Data;
 using EduTrack.Api.Repositories;
 using EduTrack.Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using EduTrack.Api.Services;
+using EduTrack.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,7 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IStudentTaskRepository, StudentTaskRepository>();
-
+builder.Services.AddScoped<IStudentService, StudentService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
