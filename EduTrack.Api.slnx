@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="EduTrack.Tests/EduTrack.Tests.csproj" />
+  <Project Path="EduTrack/EduTrack.Api.csproj" />
+</Solution>
