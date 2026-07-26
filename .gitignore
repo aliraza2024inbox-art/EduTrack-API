@@ -1,6 +1,12 @@
-﻿.vs/
-bin/
+﻿bin/
 obj/
+.vs/
+
 *.user
 *.suo
-.vscode/
+
+appsettings.Development.json
+
+*.db
+*.mdf
+*.ldf

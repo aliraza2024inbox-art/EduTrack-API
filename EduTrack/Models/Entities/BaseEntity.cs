@@ -1,4 +1,4 @@
-namespace EduTrack.Models.Entities;
+namespace EduTrack.Api.Models.Entities;
 
 /// <summary>
 /// Base entity class that all domain entities inherit from.

@@ -1,14 +1,10 @@
-﻿using EduTrack.Api.Controllers.Models.Entities;
-
 namespace EduTrack.Api.Models.Entities;
 
-public class Course
+public class Course : BaseEntity
 {
-    public int Id { get; set; }
+    public string CourseName { get; set; } = string.Empty;
 
-    public string Title { get; set; } = string.Empty;
-
-    public string Description { get; set; } = string.Empty;
+    public string CourseCode { get; set; } = string.Empty;
 
     public int CreditHours { get; set; }
 

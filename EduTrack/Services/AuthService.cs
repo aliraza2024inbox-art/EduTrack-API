@@ -2,6 +2,7 @@
 using EduTrack.Api.Data;
 using EduTrack.Api.Models.DTOs.Auth;
 using EduTrack.Api.Models.Entities;
+using EduTrack.Api.Models.Entities.Enums;
 using EduTrack.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,11 +29,16 @@ public class AuthService : IAuthService
         if (exists)
             return false;
 
+        if (!Enum.TryParse<Role>(dto.Role, true, out var role))
+        {
+            role = Role.Student;
+        }
+
         var user = new ApplicationUser
         {
             Email = dto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            Role = dto.Role
+            Role = role.ToString()
         };
 
         _context.Users.Add(user);

@@ -1,11 +1,13 @@
 using EduTrack.Api.Models.DTOs.Student;
 using EduTrack.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrack.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class StudentController : ControllerBase
 {
     private readonly IStudentService _studentService;
@@ -17,6 +19,7 @@ public class StudentController : ControllerBase
 
     // GET: api/Student
     [HttpGet]
+    [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetAllStudents()
     {
         var students = await _studentService.GetAllStudentsAsync();
@@ -25,6 +28,7 @@ public class StudentController : ControllerBase
 
     // GET: api/Student/5
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetStudent(int id)
     {
         var student = await _studentService.GetStudentByIdAsync(id);
@@ -37,6 +41,7 @@ public class StudentController : ControllerBase
 
     // GET: api/Student/5/courses
     [HttpGet("{id}/courses")]
+    [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetStudentWithCourses(int id)
     {
         var student = await _studentService.GetStudentWithCoursesAsync(id);
@@ -49,6 +54,7 @@ public class StudentController : ControllerBase
 
     // POST: api/Student
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateStudent([FromBody] CreateStudentDto studentDto)
     {
         var success = await _studentService.CreateStudentAsync(studentDto);
@@ -64,6 +70,7 @@ public class StudentController : ControllerBase
 
     // PUT: api/Student/5
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> UpdateStudent(int id, [FromBody] UpdateStudentDto studentDto)
     {
         var success = await _studentService.UpdateStudentAsync(id, studentDto);
@@ -79,6 +86,7 @@ public class StudentController : ControllerBase
 
     // DELETE: api/Student/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteStudent(int id)
     {
         var success = await _studentService.DeleteStudentAsync(id);

@@ -1,4 +1,4 @@
-﻿namespace EduTrack.Api.Models.DTOs.Auth;
+namespace EduTrack.Api.Models.DTOs.Auth;
 
 public class LoginDto
 {

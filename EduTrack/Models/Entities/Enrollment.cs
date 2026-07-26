@@ -1,14 +1,12 @@
-﻿namespace EduTrack.Api.Models.Entities;
+namespace EduTrack.Api.Models.Entities;
 
-public class Enrollment
+public class Enrollment : BaseEntity
 {
-    public int Id { get; set; }
-
     public int StudentId { get; set; }
 
-    public int CourseId { get; set; }
-
     public Student Student { get; set; } = null!;
+
+    public int CourseId { get; set; }
 
     public Course Course { get; set; } = null!;
 }
