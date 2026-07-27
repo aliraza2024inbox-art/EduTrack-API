@@ -98,11 +98,13 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IStudentTaskRepository, StudentTaskRepository>();
-
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 // Services
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IStudentTaskService, StudentTaskService>();
 
 var app = builder.Build();
 
