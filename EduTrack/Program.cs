@@ -10,6 +10,13 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
+using EduTrack.Api.Middleware;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using EduTrack.Api.Validators;
+using EduTrack.Api.Extensions;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // ===========================================
@@ -17,6 +24,14 @@ var builder = WebApplication.CreateBuilder(args);
 // ===========================================
 
 builder.Services.AddControllers();
+
+builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddApplicationLogging();
+builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -114,7 +129,7 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

@@ -10,28 +10,27 @@ namespace EduTrack.Api.Controllers;
 [Authorize]
 public class CourseController : ControllerBase
 {
-    private readonly ICourseService _courseService;
+    private readonly ICourseService _service;
 
-    public CourseController(ICourseService courseService)
+    public CourseController(ICourseService service)
     {
-        _courseService = courseService;
+        _service = service;
     }
 
     // GET: api/Course
     [HttpGet]
     [Authorize(Roles = "Admin,Teacher,Student")]
-    public async Task<IActionResult> GetAllCourses()
+    public async Task<IActionResult> GetAll()
     {
-        var courses = await _courseService.GetAllCoursesAsync();
-        return Ok(courses);
+        return Ok(await _service.GetAllCoursesAsync());
     }
 
     // GET: api/Course/5
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin,Teacher,Student")]
-    public async Task<IActionResult> GetCourse(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var course = await _courseService.GetCourseByIdAsync(id);
+        var course = await _service.GetCourseByIdAsync(id);
 
         if (course == null)
             return NotFound();
@@ -42,9 +41,9 @@ public class CourseController : ControllerBase
     // GET: api/Course/5/students
     [HttpGet("{id}/students")]
     [Authorize(Roles = "Admin,Teacher")]
-    public async Task<IActionResult> GetCourseWithStudents(int id)
+    public async Task<IActionResult> GetStudents(int id)
     {
-        var course = await _courseService.GetCourseWithStudentsAsync(id);
+        var course = await _service.GetCourseWithStudentsAsync(id);
 
         if (course == null)
             return NotFound();
@@ -55,9 +54,9 @@ public class CourseController : ControllerBase
     // POST: api/Course
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateCourse([FromBody] Course course)
+    public async Task<IActionResult> Create(Course course)
     {
-        await _courseService.CreateCourseAsync(course);
+        await _service.CreateCourseAsync(course);
 
         return Ok(new
         {
@@ -65,28 +64,12 @@ public class CourseController : ControllerBase
         });
     }
 
-    // PUT: api/Course/5
-    [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateCourse(int id, [FromBody] Course course)
-    {
-        var success = await _courseService.UpdateCourseAsync(id, course);
-
-        if (!success)
-            return NotFound();
-
-        return Ok(new
-        {
-            Message = "Course updated successfully."
-        });
-    }
-
     // DELETE: api/Course/5
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> DeleteCourse(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var success = await _courseService.DeleteCourseAsync(id);
+        var success = await _service.DeleteCourseAsync(id);
 
         if (!success)
             return NotFound();

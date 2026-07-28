@@ -2,7 +2,7 @@ using EduTrack.Api.Models.DTOs.Student;
 using EduTrack.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using EduTrack.Api.Responses;
 namespace EduTrack.Api.Controllers;
 
 [ApiController]
@@ -23,7 +23,10 @@ public class StudentController : ControllerBase
     public async Task<IActionResult> GetAllStudents()
     {
         var students = await _studentService.GetAllStudentsAsync();
-        return Ok(students);
+        return Ok(new ApiResponse<IEnumerable<StudentDto>>(
+     true,
+     "Students retrieved successfully.",
+     students));
     }
 
     // GET: api/Student/5
