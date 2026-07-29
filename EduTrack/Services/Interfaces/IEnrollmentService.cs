@@ -6,9 +6,9 @@ public interface IEnrollmentService
 {
     Task<IEnumerable<Enrollment>> GetAllEnrollmentsAsync();
 
-    Task<Enrollment?> GetEnrollmentByIdAsync(int id);
+    Task<Enrollment> GetEnrollmentByIdAsync(int id);
 
-    Task CreateEnrollmentAsync(Enrollment enrollment);
+    Task<Enrollment> CreateEnrollmentAsync(Enrollment enrollment);
 
-    Task<bool> DeleteEnrollmentAsync(int id);
+    Task DeleteEnrollmentAsync(int id);
 }

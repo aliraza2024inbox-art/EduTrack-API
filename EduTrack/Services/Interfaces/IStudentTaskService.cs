@@ -6,11 +6,11 @@ public interface IStudentTaskService
 {
     Task<IEnumerable<StudentTask>> GetAllTasksAsync();
 
-    Task<IEnumerable<StudentTask>> GetTasksByStudentIdAsync(int studentId);
+    Task<StudentTask> GetTaskByIdAsync(int id);
 
-    Task<StudentTask?> GetTaskByIdAsync(int id);
+    Task<StudentTask> CreateTaskAsync(StudentTask task);
 
-    Task CreateTaskAsync(StudentTask task);
+    Task<StudentTask> UpdateTaskAsync(int id, StudentTask task);
 
-    Task<bool> DeleteTaskAsync(int id);
+    Task DeleteTaskAsync(int id);
 }

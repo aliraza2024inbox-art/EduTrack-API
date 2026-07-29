@@ -18,32 +18,48 @@ public class StudentTaskService : IStudentTaskService
         return await _repository.GetAllAsync();
     }
 
-    public async Task<IEnumerable<StudentTask>> GetTasksByStudentIdAsync(int studentId)
-    {
-        return await _repository.GetTasksByStudentIdAsync(studentId);
-    }
-
-    public async Task<StudentTask?> GetTaskByIdAsync(int id)
-    {
-        return await _repository.GetByIdAsync(id);
-    }
-
-    public async Task CreateTaskAsync(StudentTask task)
-    {
-        await _repository.AddAsync(task);
-        await _repository.SaveChangesAsync();
-    }
-
-    public async Task<bool> DeleteTaskAsync(int id)
+    public async Task<StudentTask> GetTaskByIdAsync(int id)
     {
         var task = await _repository.GetByIdAsync(id);
 
         if (task == null)
-            return false;
+            throw new KeyNotFoundException($"Task with ID {id} was not found.");
+
+        return task;
+    }
+
+    public async Task<StudentTask> CreateTaskAsync(StudentTask task)
+    {
+        await _repository.AddAsync(task);
+        return task;
+    }
+
+    public async Task<StudentTask> UpdateTaskAsync(int id, StudentTask updatedTask)
+    {
+        var task = await _repository.GetByIdAsync(id);
+
+        if (task == null)
+            throw new KeyNotFoundException($"Task with ID {id} was not found.");
+
+        task.Title = updatedTask.Title;
+        task.Description = updatedTask.Description;
+        task.IsCompleted = updatedTask.IsCompleted;
+        task.StudentId = updatedTask.StudentId;
+
+        _repository.Update(task);
+        await _repository.SaveChangesAsync();
+
+        return task;
+    }
+
+    public async Task DeleteTaskAsync(int id)
+    {
+        var task = await _repository.GetByIdAsync(id);
+
+        if (task == null)
+            throw new KeyNotFoundException($"Task with ID {id} was not found.");
 
         _repository.Delete(task);
         await _repository.SaveChangesAsync();
-
-        return true;
     }
 }

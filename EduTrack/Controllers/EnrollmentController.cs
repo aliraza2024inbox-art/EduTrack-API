@@ -1,4 +1,5 @@
 using EduTrack.Api.Models.Entities;
+using EduTrack.Api.Responses;
 using EduTrack.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +23,12 @@ public class EnrollmentController : ControllerBase
     [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> GetAll()
     {
-        var data = await _service.GetAllEnrollmentsAsync();
-        return Ok(data);
+        var enrollments = await _service.GetAllEnrollmentsAsync();
+
+        return Ok(new ApiResponse<IEnumerable<Enrollment>>(
+            true,
+            "Enrollments retrieved successfully.",
+            enrollments));
     }
 
     // GET: api/Enrollment/5
@@ -33,10 +38,10 @@ public class EnrollmentController : ControllerBase
     {
         var enrollment = await _service.GetEnrollmentByIdAsync(id);
 
-        if (enrollment == null)
-            return NotFound();
-
-        return Ok(enrollment);
+        return Ok(new ApiResponse<Enrollment>(
+            true,
+            "Enrollment retrieved successfully.",
+            enrollment));
     }
 
     // POST: api/Enrollment
@@ -44,12 +49,12 @@ public class EnrollmentController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(Enrollment enrollment)
     {
-        await _service.CreateEnrollmentAsync(enrollment);
+        var createdEnrollment = await _service.CreateEnrollmentAsync(enrollment);
 
-        return Ok(new
-        {
-            Message = "Enrollment created successfully."
-        });
+        return Ok(new ApiResponse<Enrollment>(
+            true,
+            "Enrollment created successfully.",
+            createdEnrollment));
     }
 
     // DELETE: api/Enrollment/5
@@ -57,14 +62,11 @@ public class EnrollmentController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
-        var success = await _service.DeleteEnrollmentAsync(id);
+        await _service.DeleteEnrollmentAsync(id);
 
-        if (!success)
-            return NotFound();
-
-        return Ok(new
-        {
-            Message = "Enrollment deleted successfully."
-        });
+        return Ok(new ApiResponse<string>(
+            true,
+            "Enrollment deleted successfully.",
+            null));
     }
 }

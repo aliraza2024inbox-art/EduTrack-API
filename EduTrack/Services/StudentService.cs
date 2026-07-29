@@ -8,75 +8,63 @@ namespace EduTrack.Api.Services;
 
 public class StudentService : IStudentService
 {
-    private readonly IStudentRepository _studentRepository;
+    private readonly IStudentRepository _repository;
     private readonly IMapper _mapper;
 
-    public StudentService(
-        IStudentRepository studentRepository,
-        IMapper mapper)
+    public StudentService(IStudentRepository repository, IMapper mapper)
     {
-        _studentRepository = studentRepository;
+        _repository = repository;
         _mapper = mapper;
     }
 
     public async Task<IEnumerable<StudentDto>> GetAllStudentsAsync()
     {
-        var students = await _studentRepository.GetAllAsync();
+        var students = await _repository.GetAllAsync();
         return _mapper.Map<IEnumerable<StudentDto>>(students);
     }
 
-    public async Task<StudentDto?> GetStudentByIdAsync(int id)
+    public async Task<StudentDto> GetStudentByIdAsync(int id)
     {
-        var student = await _studentRepository.GetByIdAsync(id);
+        var student = await _repository.GetByIdAsync(id);
 
         if (student == null)
-            return null;
+            throw new KeyNotFoundException($"Student with ID {id} was not found.");
 
         return _mapper.Map<StudentDto>(student);
     }
 
-    public async Task<StudentDto?> GetStudentWithCoursesAsync(int id)
-    {
-        var student = await _studentRepository.GetStudentWithCoursesAsync(id);
-
-        if (student == null)
-            return null;
-
-        return _mapper.Map<StudentDto>(student);
-    }
-
-    public async Task<bool> CreateStudentAsync(CreateStudentDto dto)
+    public async Task<StudentDto> CreateStudentAsync(CreateStudentDto dto)
     {
         var student = _mapper.Map<Student>(dto);
 
-        await _studentRepository.AddAsync(student);
+        await _repository.AddAsync(student);
 
-        return await _studentRepository.SaveChangesAsync();
+        return _mapper.Map<StudentDto>(student);
     }
 
-    public async Task<bool> UpdateStudentAsync(int id, UpdateStudentDto dto)
+    public async Task<StudentDto> UpdateStudentAsync(int id, UpdateStudentDto dto)
     {
-        var student = await _studentRepository.GetByIdAsync(id);
+        var student = await _repository.GetByIdAsync(id);
 
         if (student == null)
-            return false;
+            throw new KeyNotFoundException($"Student with ID {id} was not found.");
 
         _mapper.Map(dto, student);
 
-        _studentRepository.Update(student);
+        _repository.Update(student);
+        await _repository.SaveChangesAsync();
 
-        return await _studentRepository.SaveChangesAsync();
+        return _mapper.Map<StudentDto>(student);
     }
 
-    public async Task<bool> DeleteStudentAsync(int id)
+    public async Task DeleteStudentAsync(int id)
     {
-        var student = await _studentRepository.GetByIdAsync(id);
+        var student = await _repository.GetByIdAsync(id);
 
         if (student == null)
-            return false;
+            throw new KeyNotFoundException($"Student with ID {id} was not found.");
 
-        _studentRepository.Delete(student);
-
-        return await _studentRepository.SaveChangesAsync();
+        _repository.Delete(student);
+        await _repository.SaveChangesAsync();
     }
 }

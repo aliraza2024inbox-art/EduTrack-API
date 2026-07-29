@@ -18,26 +18,30 @@ public class EnrollmentService : IEnrollmentService
         return await _repository.GetAllAsync();
     }
 
-    public async Task<Enrollment?> GetEnrollmentByIdAsync(int id)
-    {
-        return await _repository.GetByIdAsync(id);
-    }
-
-    public async Task CreateEnrollmentAsync(Enrollment enrollment)
-    {
-        await _repository.AddAsync(enrollment);
-    }
-
-    public async Task<bool> DeleteEnrollmentAsync(int id)
+    public async Task<Enrollment> GetEnrollmentByIdAsync(int id)
     {
         var enrollment = await _repository.GetByIdAsync(id);
 
         if (enrollment == null)
-            return false;
+            throw new KeyNotFoundException($"Enrollment with ID {id} was not found.");
+
+        return enrollment;
+    }
+
+    public async Task<Enrollment> CreateEnrollmentAsync(Enrollment enrollment)
+    {
+        await _repository.AddAsync(enrollment);
+        return enrollment;
+    }
+
+    public async Task DeleteEnrollmentAsync(int id)
+    {
+        var enrollment = await _repository.GetByIdAsync(id);
+
+        if (enrollment == null)
+            throw new KeyNotFoundException($"Enrollment with ID {id} was not found.");
 
         _repository.Delete(enrollment);
         await _repository.SaveChangesAsync();
-
-        return true;
     }
 }

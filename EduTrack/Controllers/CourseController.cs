@@ -1,4 +1,5 @@
 using EduTrack.Api.Models.Entities;
+using EduTrack.Api.Responses;
 using EduTrack.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,12 @@ public class CourseController : ControllerBase
     [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await _service.GetAllCoursesAsync());
+        var courses = await _service.GetAllCoursesAsync();
+
+        return Ok(new ApiResponse<IEnumerable<Course>>(
+            true,
+            "Courses retrieved successfully.",
+            courses));
     }
 
     // GET: api/Course/5
@@ -32,23 +38,10 @@ public class CourseController : ControllerBase
     {
         var course = await _service.GetCourseByIdAsync(id);
 
-        if (course == null)
-            return NotFound();
-
-        return Ok(course);
-    }
-
-    // GET: api/Course/5/students
-    [HttpGet("{id}/students")]
-    [Authorize(Roles = "Admin,Teacher")]
-    public async Task<IActionResult> GetStudents(int id)
-    {
-        var course = await _service.GetCourseWithStudentsAsync(id);
-
-        if (course == null)
-            return NotFound();
-
-        return Ok(course);
+        return Ok(new ApiResponse<Course>(
+            true,
+            "Course retrieved successfully.",
+            course));
     }
 
     // POST: api/Course
@@ -56,12 +49,25 @@ public class CourseController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(Course course)
     {
-        await _service.CreateCourseAsync(course);
+        var createdCourse = await _service.CreateCourseAsync(course);
 
-        return Ok(new
-        {
-            Message = "Course created successfully."
-        });
+        return Ok(new ApiResponse<Course>(
+            true,
+            "Course created successfully.",
+            createdCourse));
+    }
+
+    // PUT: api/Course/5
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,Teacher")]
+    public async Task<IActionResult> Update(int id, Course course)
+    {
+        var updatedCourse = await _service.UpdateCourseAsync(id, course);
+
+        return Ok(new ApiResponse<Course>(
+            true,
+            "Course updated successfully.",
+            updatedCourse));
     }
 
     // DELETE: api/Course/5
@@ -69,14 +75,11 @@ public class CourseController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
-        var success = await _service.DeleteCourseAsync(id);
+        await _service.DeleteCourseAsync(id);
 
-        if (!success)
-            return NotFound();
-
-        return Ok(new
-        {
-            Message = "Course deleted successfully."
-        });
+        return Ok(new ApiResponse<string>(
+            true,
+            "Course deleted successfully.",
+            null));
     }
 }

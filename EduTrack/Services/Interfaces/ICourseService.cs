@@ -6,13 +6,11 @@ public interface ICourseService
 {
     Task<IEnumerable<Course>> GetAllCoursesAsync();
 
-    Task<Course?> GetCourseByIdAsync(int id);
+    Task<Course> GetCourseByIdAsync(int id);
 
-    Task<Course?> GetCourseWithStudentsAsync(int id);
+    Task<Course> CreateCourseAsync(Course course);
 
-    Task<bool> CreateCourseAsync(Course course);
+    Task<Course> UpdateCourseAsync(int id, Course course);
 
-    Task<bool> UpdateCourseAsync(int id, Course course);
-
-    Task<bool> DeleteCourseAsync(int id);
+    Task DeleteCourseAsync(int id);
 }

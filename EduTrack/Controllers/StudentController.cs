@@ -1,8 +1,9 @@
 using EduTrack.Api.Models.DTOs.Student;
+using EduTrack.Api.Responses;
 using EduTrack.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using EduTrack.Api.Responses;
+
 namespace EduTrack.Api.Controllers;
 
 [ApiController]
@@ -23,10 +24,11 @@ public class StudentController : ControllerBase
     public async Task<IActionResult> GetAllStudents()
     {
         var students = await _studentService.GetAllStudentsAsync();
+
         return Ok(new ApiResponse<IEnumerable<StudentDto>>(
-     true,
-     "Students retrieved successfully.",
-     students));
+            true,
+            "Students retrieved successfully.",
+            students));
     }
 
     // GET: api/Student/5
@@ -36,55 +38,36 @@ public class StudentController : ControllerBase
     {
         var student = await _studentService.GetStudentByIdAsync(id);
 
-        if (student == null)
-            return NotFound();
-
-        return Ok(student);
-    }
-
-    // GET: api/Student/5/courses
-    [HttpGet("{id}/courses")]
-    [Authorize(Roles = "Admin,Teacher,Student")]
-    public async Task<IActionResult> GetStudentWithCourses(int id)
-    {
-        var student = await _studentService.GetStudentWithCoursesAsync(id);
-
-        if (student == null)
-            return NotFound();
-
-        return Ok(student);
+        return Ok(new ApiResponse<StudentDto>(
+            true,
+            "Student retrieved successfully.",
+            student));
     }
 
     // POST: api/Student
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateStudent([FromBody] CreateStudentDto studentDto)
+    public async Task<IActionResult> CreateStudent(CreateStudentDto studentDto)
     {
-        var success = await _studentService.CreateStudentAsync(studentDto);
+        var student = await _studentService.CreateStudentAsync(studentDto);
 
-        if (!success)
-            return BadRequest();
-
-        return Ok(new
-        {
-            Message = "Student created successfully."
-        });
+        return Ok(new ApiResponse<StudentDto>(
+            true,
+            "Student created successfully.",
+            student));
     }
 
     // PUT: api/Student/5
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,Teacher")]
-    public async Task<IActionResult> UpdateStudent(int id, [FromBody] UpdateStudentDto studentDto)
+    public async Task<IActionResult> UpdateStudent(int id, UpdateStudentDto studentDto)
     {
-        var success = await _studentService.UpdateStudentAsync(id, studentDto);
+        var student = await _studentService.UpdateStudentAsync(id, studentDto);
 
-        if (!success)
-            return NotFound();
-
-        return Ok(new
-        {
-            Message = "Student updated successfully."
-        });
+        return Ok(new ApiResponse<StudentDto>(
+            true,
+            "Student updated successfully.",
+            student));
     }
 
     // DELETE: api/Student/5
@@ -92,14 +75,11 @@ public class StudentController : ControllerBase
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteStudent(int id)
     {
-        var success = await _studentService.DeleteStudentAsync(id);
+        await _studentService.DeleteStudentAsync(id);
 
-        if (!success)
-            return NotFound();
-
-        return Ok(new
-        {
-            Message = "Student deleted successfully."
-        });
+        return Ok(new ApiResponse<string>(
+            true,
+            "Student deleted successfully.",
+            null));
     }
 }

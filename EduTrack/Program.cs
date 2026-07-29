@@ -17,6 +17,7 @@ using EduTrack.Api.Validators;
 using EduTrack.Api.Extensions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using EduTrack.Api.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // ===========================================
@@ -130,11 +131,13 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-app.UseAuthorization();
 
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
