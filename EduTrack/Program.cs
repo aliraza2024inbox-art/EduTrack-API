@@ -1,24 +1,29 @@
+using AutoMapper;
 using EduTrack.Api.Configurations;
 using EduTrack.Api.Data;
+using EduTrack.Api.Middleware;
 using EduTrack.Api.Repositories;
 using EduTrack.Api.Repositories.Interfaces;
 using EduTrack.Api.Services;
 using EduTrack.Api.Services.Interfaces;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using AutoMapper;
 using Microsoft.OpenApi.Models;
-using EduTrack.Api.Middleware;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using EduTrack.Api.Validators;
-using EduTrack.Api.Extensions;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using EduTrack.Api.Middleware;
+using Serilog;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// ===========================================
+// Configure Serilog
+// ===========================================
+
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
 
 // ===========================================
 // Add Services
@@ -26,16 +31,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddApplicationLogging();
-builder.Services.AddFluentValidationAutoValidation();
-
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+// AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
@@ -70,12 +74,18 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// ===========================================
 // Database
+// ===========================================
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// ===========================================
 // JWT Settings
+// ===========================================
+
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings"));
 
@@ -83,7 +93,10 @@ var jwtSettings = builder.Configuration
     .GetSection("JwtSettings")
     .Get<JwtSettings>();
 
-// JWT Authentication
+// ===========================================
+// Authentication
+// ===========================================
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -109,18 +122,19 @@ builder.Services
 
 // Repositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IStudentTaskRepository, StudentTaskRepository>();
-builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+
 // Services
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<IStudentTaskService, StudentTaskService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ICourseService, CourseService>();
-builder.Services.AddScoped<IStudentTaskService, StudentTaskService>();
 
 var app = builder.Build();
 
@@ -128,16 +142,18 @@ var app = builder.Build();
 // Configure HTTP Request Pipeline
 // ===========================================
 
+app.UseSerilogRequestLogging();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
