@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using EduTrack.Api.Models.DTOs.Auth;
 using FluentAssertions;
 using Xunit;
@@ -18,20 +19,74 @@ public class AuthIntegrationTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task Register_ShouldReturnSuccess()
     {
-        // Arrange
-        var request = new RegisterDto
+        var registerDto = new RegisterDto
         {
-            Email = "integration@test.com",
+            Email = $"user{Guid.NewGuid()}@test.com",
             Password = "Password123!",
             Role = "Student"
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync(
             "/api/Auth/register",
-            request);
+            registerDto);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Login_ShouldReturnToken_WhenCredentialsAreValid()
+    {
+        // Arrange
+        var email = $"user{Guid.NewGuid()}@test.com";
+
+        var registerDto = new RegisterDto
+        {
+            Email = email,
+            Password = "Password123!",
+            Role = "Student"
+        };
+
+        var registerResponse = await _client.PostAsJsonAsync(
+            "/api/Auth/register",
+            registerDto);
+
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var loginDto = new LoginDto
+        {
+            Email = email,
+            Password = "Password123!"
+        };
+
+        // Act
+        var loginResponse = await _client.PostAsJsonAsync(
+            "/api/Auth/login",
+            loginDto);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var json = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
+
+        json.TryGetProperty("token", out var token)
+            .Should().BeTrue();
+
+        token.GetString().Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public async Task Login_ShouldReturnUnauthorized_WhenUserDoesNotExist()
+    {
+        var loginDto = new LoginDto
+        {
+            Email = "notfound@test.com",
+            Password = "WrongPassword123!"
+        };
+
+        var response = await _client.PostAsJsonAsync(
+            "/api/Auth/login",
+            loginDto);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }
