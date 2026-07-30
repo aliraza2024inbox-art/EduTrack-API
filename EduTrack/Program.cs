@@ -13,7 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
-
+using System.Reflection;
+using System.IO;
 var builder = WebApplication.CreateBuilder(args);
 
 // ===========================================
@@ -47,6 +48,10 @@ builder.Services.AddSwaggerGen(options =>
         Title = "EduTrack API",
         Version = "v1"
     });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    options.IncludeXmlComments(xmlPath);
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {

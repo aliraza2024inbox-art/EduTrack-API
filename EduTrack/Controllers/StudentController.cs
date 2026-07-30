@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrack.Api.Controllers;
 
+/// <summary>
+/// Provides endpoints for managing students.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -18,7 +21,10 @@ public class StudentController : ControllerBase
         _studentService = studentService;
     }
 
-    // GET: api/Student
+    /// <summary>
+    /// Retrieves all students.
+    /// </summary>
+    /// <returns>A list of students.</returns>
     [HttpGet]
     [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetAllStudents()
@@ -31,7 +37,11 @@ public class StudentController : ControllerBase
             students));
     }
 
-    // GET: api/Student/5
+    /// <summary>
+    /// Retrieves a student by ID.
+    /// </summary>
+    /// <param name="id">Student ID.</param>
+    /// <returns>The requested student.</returns>
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetStudent(int id)
@@ -44,7 +54,11 @@ public class StudentController : ControllerBase
             student));
     }
 
-    // POST: api/Student
+    /// <summary>
+    /// Creates a new student.
+    /// </summary>
+    /// <param name="studentDto">Student information.</param>
+    /// <returns>The created student.</returns>
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateStudent(CreateStudentDto studentDto)
@@ -57,7 +71,12 @@ public class StudentController : ControllerBase
             student));
     }
 
-    // PUT: api/Student/5
+    /// <summary>
+    /// Updates an existing student.
+    /// </summary>
+    /// <param name="id">Student ID.</param>
+    /// <param name="studentDto">Updated student information.</param>
+    /// <returns>The updated student.</returns>
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> UpdateStudent(int id, UpdateStudentDto studentDto)
@@ -70,7 +89,11 @@ public class StudentController : ControllerBase
             student));
     }
 
-    // DELETE: api/Student/5
+    /// <summary>
+    /// Deletes a student.
+    /// </summary>
+    /// <param name="id">Student ID.</param>
+    /// <returns>Success message.</returns>
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteStudent(int id)
