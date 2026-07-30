@@ -89,4 +89,42 @@ public class AuthIntegrationTests : IClassFixture<CustomWebApplicationFactory>
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
+    [Fact]
+    public async Task Register_Then_Login_ShouldReturnJwtToken()
+    {
+        // Arrange
+        var email = $"user{Guid.NewGuid()}@test.com";
+
+        var registerDto = new RegisterDto
+        {
+            Email = email,
+            Password = "Password123!",
+            Role = "Student"
+        };
+
+        // Register the user
+        var registerResponse = await _client.PostAsJsonAsync(
+            "/api/Auth/register",
+            registerDto);
+
+        registerResponse.EnsureSuccessStatusCode();
+
+        var loginDto = new LoginDto
+        {
+            Email = email,
+            Password = "Password123!"
+        };
+
+        // Act
+        var loginResponse = await _client.PostAsJsonAsync(
+            "/api/Auth/login",
+            loginDto);
+
+        // Assert
+        loginResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var responseBody = await loginResponse.Content.ReadAsStringAsync();
+
+        responseBody.Should().Contain("token");
+    }
 }
