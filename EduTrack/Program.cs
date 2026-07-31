@@ -46,7 +46,19 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "EduTrack API",
-        Version = "v1"
+        Version = "v1",
+        Description = "A RESTful Web API for managing students, courses, enrollments, tasks, and authentication.",
+        Contact = new OpenApiContact
+        {
+            Name = "Syed Ali Raza",
+            Email = "aliraza2024inbox@gmail.com",
+            Url = new Uri("https://github.com/aliraza2024inbox-art")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "MIT License",
+            Url = new Uri("https://opensource.org/licenses/MIT")
+        }
     });
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

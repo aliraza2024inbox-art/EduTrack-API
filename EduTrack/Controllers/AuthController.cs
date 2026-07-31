@@ -4,18 +4,29 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EduTrack.Api.Controllers;
 
+/// <summary>
+/// Handles user authentication and authorization operations.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AuthController"/> class.
+    /// </summary>
+    /// <param name="authService">Authentication service.</param>
     public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
 
-    // POST: api/Auth/register
+    /// <summary>
+    /// Registers a new user.
+    /// </summary>
+    /// <param name="dto">User registration details.</param>
+    /// <returns>A success message if registration succeeds.</returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto dto)
     {
@@ -27,7 +38,11 @@ public class AuthController : ControllerBase
         return Ok("User registered successfully.");
     }
 
-    // POST: api/Auth/login
+    /// <summary>
+    /// Authenticates a user and returns a JWT token.
+    /// </summary>
+    /// <param name="dto">User login credentials.</param>
+    /// <returns>A JWT token if authentication succeeds.</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto dto)
     {

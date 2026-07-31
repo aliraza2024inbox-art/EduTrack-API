@@ -1,0 +1,5 @@
+2026-07-31 22:11:31.683 +05:00 [INF] HTTP GET /swagger/index.html responded 200 in 247.1147 ms
+2026-07-31 22:11:32.045 +05:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 189.4149 ms
+2026-07-31 22:12:02.101 +05:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 44.9894 ms
+2026-07-31 22:12:02.180 +05:00 [WRN] Failed to determine the https port for redirect.
+2026-07-31 22:12:02.287 +05:00 [INF] HTTP GET /favicon.ico responded 404 in 122.9579 ms
