@@ -67,6 +67,11 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 
+		<!-- Code Analysis -->
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		
 	</ItemGroup>
 
 	<ItemGroup>
