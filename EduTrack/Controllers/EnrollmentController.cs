@@ -33,7 +33,7 @@ public class EnrollmentController : ControllerBase
 
     // GET: api/Enrollment/5
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Teacher")]
+    [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetById(int id)
     {
         var enrollment = await _service.GetEnrollmentByIdAsync(id);

@@ -26,7 +26,7 @@ public class StudentController : ControllerBase
     /// </summary>
     /// <returns>A list of students.</returns>
     [HttpGet]
-    [Authorize(Roles = "Admin,Teacher,Student")]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> GetAllStudents()
     {
         var students = await _studentService.GetAllStudentsAsync();

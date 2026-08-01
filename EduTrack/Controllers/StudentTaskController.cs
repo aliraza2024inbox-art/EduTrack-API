@@ -20,7 +20,7 @@ public class StudentTaskController : ControllerBase
 
     // GET: api/StudentTask
     [HttpGet]
-    [Authorize(Roles = "Admin,Teacher")]
+    [Authorize(Roles = "Admin,Teacher,Student")]
     public async Task<IActionResult> GetAll()
     {
         var tasks = await _service.GetAllTasksAsync();
