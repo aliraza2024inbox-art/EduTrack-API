@@ -39,6 +39,12 @@ public class StudentService : IStudentService
 
         await _repository.AddAsync(student);
 
+        // Save the student to the database
+        var result = await _repository.SaveChangesAsync();
+
+        if (!result)
+            throw new Exception("Failed to save student.");
+
         return _mapper.Map<StudentDto>(student);
     }
 
@@ -52,7 +58,11 @@ public class StudentService : IStudentService
         _mapper.Map(dto, student);
 
         _repository.Update(student);
-        await _repository.SaveChangesAsync();
+
+        var result = await _repository.SaveChangesAsync();
+
+        if (!result)
+            throw new Exception("Failed to update student.");
 
         return _mapper.Map<StudentDto>(student);
     }
@@ -65,6 +75,10 @@ public class StudentService : IStudentService
             throw new KeyNotFoundException($"Student with ID {id} was not found.");
 
         _repository.Delete(student);
-        await _repository.SaveChangesAsync();
+
+        var result = await _repository.SaveChangesAsync();
+
+        if (!result)
+            throw new Exception("Failed to delete student.");
     }
 }
